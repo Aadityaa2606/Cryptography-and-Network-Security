@@ -74,6 +74,5 @@ if __name__ == '__main__':
     print("Public Key", public, "Private Key", private)
     message = input("Enter Message:")
     encrypted_msg = encrypt(public, message)
-    print("Encrypted Message is:", ''.join(map(lambda x: str(x),
-    encrypted_msg)))
+    print("Encrypted Message is:", ''.join(map(lambda x: str(x), encrypted_msg)))
     print("Decrypted Message is:", decrypt(private, encrypted_msg))
