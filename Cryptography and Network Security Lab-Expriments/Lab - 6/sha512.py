@@ -104,7 +104,7 @@ def sha512(message):
             c = b
             b = a
             a = (temp1 + temp2) & 0xFFFFFFFFFFFFFFFF
-            # print(f"    Round {i}: {a}, {b}, {c}, {d}, {e}, {f}, {g}, {h}")
+            print(f"    Round {i}: {hex(a)}, {hex(b)}, {hex(c)}, {hex(d)}, {hex(e)}, {hex(f)}, {hex(g)}, {hex(h)}")
 
         sha512_hash = [
             (x + y) & 0xFFFFFFFFFFFFFFFF
@@ -122,15 +122,15 @@ def sha512(message):
     ).decode('utf-8')
 
 if __name__ == "__main__":
-    # print("Exactly 896 Bits: 112 characters")
+    print("Exactly 896 Bits: 112 characters")
     string1 = "This is aadityaa 21BCE1964 studying in VIT Chennai India. this expriment performs sha encryption decryption algo"
-    # print("Input Message: ", string1)
-    # print("Hash:", sha512(string1))
+    print("Input Message: ", string1)
+    print("Hash:", sha512(string1))
     
-    print("Less than 896 Bits: 26 characters")
-    string2 = "This is less than 896 bits"
-    print("Input Message: ", string2)
-    print("Hash:", sha512(string2))
+    # print("Less than 896 Bits: 26 characters")
+    # string2 = "This is less than 896 bits"
+    # print("Input Message: ", string2)
+    # print("Hash:", sha512(string2))
 
     # print("Greater than 896 Bits: 120 characters")
     string3 = "This is aadityaa 21BCE1964 studying in VIT Chennai India. This expriment can perform sha 512 encryption and decryption algorithm and it is similar to md5 algorithm with minor changes"

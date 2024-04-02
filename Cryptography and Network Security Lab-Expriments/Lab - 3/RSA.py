@@ -66,7 +66,6 @@ def decrypt(pk, ciphertext):
     return ''.join(plain)
 
 if __name__ == '__main__':
-
     p = generate_prime()
     q = generate_prime()
     print("P", p, "Q", q)
