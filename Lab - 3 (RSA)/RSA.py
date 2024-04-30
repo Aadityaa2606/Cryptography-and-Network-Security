@@ -1,10 +1,12 @@
 import random
 
+# Calculate the GCD of two numbers using Euclidean algorithm
 def gcd(a, b):
     while b != 0:
         a, b = b, a % b
     return a
 
+# Calculate the multiplicative inverse of 'e' modulo 'phi' using Extended Euclidean algorithm
 def multiplicative_inverse(e, phi):
     d = 0
     x1 = 0
@@ -29,8 +31,8 @@ def multiplicative_inverse(e, phi):
     if temp_phi == 1:
         return d + phi
 
+# Generate a prime number by generating a random 8-bit number and checking if it is prime manually
 def generate_prime():
-    # Generates a prime number by generating a random 10 bit number and checking if it is prime manually
     while True:
         p = random.getrandbits(8)
         if p % 2 != 0:
@@ -40,38 +42,56 @@ def generate_prime():
                 else:
                     return p
                 
+# Generate a key pair (public key and private key) for RSA encryption
 def generate_key_pair(p, q):
     # n = pq
     n = p * q
 
     # Phi is the totient of n
     phi = (p-1) * (q-1)
+    
+    # Choose a random number 'e' such that 1 < e < phi and gcd(e, phi) = 1
     e = random.randrange(1, phi)
     g = gcd(e, phi)
     while g != 1:
         e = random.randrange(1, phi)
         g = gcd(e, phi)
+    
+    # Calculate the multiplicative inverse of 'e' modulo 'phi' to get 'd'
     d = multiplicative_inverse(e, phi)
+    
     return ((e, n), (d, n))
 
+# Encrypt a plaintext message using the public key
 def encrypt(pk, plaintext):
     key, n = pk
+    # Formula: c = (message ^ pub_key) % n
     cipher = [pow(ord(char), key, n) for char in plaintext]
     return cipher
 
+# Decrypt a ciphertext message using the private key
 def decrypt(pk, ciphertext):
     key, n = pk
-    # Decrypt each chunk
+    # Formula: m = (cipher ^ priv_key) % n
     plain = [chr(pow(int(chunk), key, n)) for chunk in ciphertext]
     return ''.join(plain)
 
 if __name__ == '__main__':
+    # Generate two prime numbers 'p' and 'q'
     p = generate_prime()
     q = generate_prime()
     print("P", p, "Q", q)
+    
+    # Generate the public key and private key pair
     public, private = generate_key_pair(p, q)
     print("Public Key", public, "Private Key", private)
+    
+    # Get the message from the user
     message = input("Enter Message:")
+    
+    # Encrypt the message using the public key
     encrypted_msg = encrypt(public, message)
     print("Encrypted Message is:", ''.join(map(lambda x: str(x), encrypted_msg)))
+    
+    # Decrypt the encrypted message using the private key
     print("Decrypted Message is:", decrypt(private, encrypted_msg))

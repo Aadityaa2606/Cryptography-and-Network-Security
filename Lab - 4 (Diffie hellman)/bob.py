@@ -14,13 +14,13 @@ def receiver():
 
         print("Generated Public Key", publickey)
 
-        # sending public key to bob
+        # sending public key to alice
         s.sendall(str(publickey).encode())
         alicepubkey = int(s.recv(1024).decode())
         alice_secret_bob = pow(alicepubkey, privatekey, P)
         print("Shared Secret with Alice", alice_secret_bob)
 
-        # sending shared secret to bob
+        # sending shared secret to alice
         s.sendall(str(alice_secret_bob).encode())
 
 if __name__ == '__main__':

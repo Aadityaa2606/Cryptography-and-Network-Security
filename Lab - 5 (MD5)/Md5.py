@@ -3,7 +3,19 @@ from enum import Enum
 from math import floor, sin
 from bitarray import bitarray
 
-# Define the four auxiliary functions that produce one 32-bit word.
+# Formula : 
+# Round 1: a = b + ((a + F(b, c, d) + X[k] + T[i]) <<< s)
+# Round 2: a = b + ((a + G(b, c, d) + X[k] + T[i]) <<< s)
+# Round 3: a = b + ((a + H(b, c, d) + X[k] + T[i]) <<< s)
+# Round 4: a = b + ((a + I(b, c, d) + X[k] + T[i]) <<< s)
+
+# Constants for each round
+# F(X, Y, Z) = (X AND Y) OR (NOT X AND Z) OR (X * Y + ~X * Z)
+# G(X, Y, Z) = (X AND Z) OR (Y AND NOT Z) OR (X * Z + Y * ~Z)
+# H(X, Y, Z) = X XOR Y XOR Z OR (X ^ Y ^ Z)
+# I(X, Y, Z) = Y XOR (X OR NOT Z) OR (Y ^ (X | ~Z))
+
+# Auxiliary functions
 def F(x, y, z):
     return x & y | ~x & z
 
@@ -15,6 +27,7 @@ def H(x, y, z):
 
 def I(x, y, z):
     return y ^ (x | ~z)
+
 
 def rotate_left(x, n):
     return x << n | x >> 32 - n
@@ -43,6 +56,7 @@ class MD5:
         self.step_3(preprocessed_bit_array)
         return self.step_4()
 
+    # Step 1: Append Padding Bits
     def step_1(self):
         bit_array = bitarray(endian="big")
         bit_array.frombytes(self.input_string.encode("utf-8"))
@@ -52,6 +66,7 @@ class MD5:
         # go back to littler endian for ease
         return bitarray(bit_array, endian="little")
 
+    # Step 2: Append Length
     def step_2(self, step_1_result):
         # get length of message in bits
         length = (len(self.input_string) * 8) % pow(2, 64)
@@ -61,8 +76,9 @@ class MD5:
         result.extend(length_bit_array)
         return result
 
+    # Step 3: Initialize MD Buffer
     def step_3(self, step_2_result):
-        # The total number of 32-bit words to process
+        # Break the message into 512-bit chunks
         N = len(step_2_result) // 32
         # Process each block
         for chunk_index in range(N // 16):
@@ -78,22 +94,27 @@ class MD5:
             D = self.buffers["D"]
             # Execute the four rounds with 16 operations each.
             for i in range(4 * 16):
+                # Round 1
                 if 0 <= i <= 15:
                     k = i
                     s = [7, 12, 17, 22]
                     temp = F(B, C, D)
+                # Round 2    
                 elif 16 <= i <= 31:
                     k = ((5 * i) + 1) % 16
                     s = [5, 9, 14, 20]
                     temp = G(B, C, D)
+                # Round 3
                 elif 32 <= i <= 47:
                     k = ((3 * i) + 5) % 16
                     s = [4, 11, 16, 23]
                     temp = H(B, C, D)
+                # Round 4
                 elif 48 <= i <= 63:
                     k = (7 * i) % 16
                     s = [6, 10, 15, 21]
                     temp = I(B, C, D)
+                    
                 temp = modular_add(temp, X[k])
                 temp = modular_add(temp, T[i])
                 temp = modular_add(temp, A)
@@ -112,6 +133,7 @@ class MD5:
             print("Buffers:", self.buffers)
             print(f"Block {chunk_index + 1} done")
 
+    # Step 4: Output
     def step_4(self):
         # Convert the buffers to little-endian to make it easier
         A = struct.unpack("<I", struct.pack(">I", self.buffers["A"]))[0]

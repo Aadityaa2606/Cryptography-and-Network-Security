@@ -271,7 +271,6 @@ def keygen(key):
 key = input("Enter the key used on client side in hexadecimal: ")
 # key = "000102030405060708090a0b0c0d0e0f"
 # key = "AABB09182736CCDD"
-# Driver Code to open socket and receice data as server
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 port = 12345
 ip = '127.0.0.1'
